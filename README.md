@@ -1,4 +1,4 @@
-# lasagna.email
+<img src="images/logoandtext.svg" alt="logo" width="250"/>
 
 A easy to use temporary email service
 
