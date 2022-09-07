@@ -83,9 +83,20 @@ func main() {
 		subject := c.Request.PostForm["subject"][0]
 		body := c.Request.PostForm["body-html"][0]
 
-		guid := xid.New()
+		if ValidateEmail(recipient) && ValidateEmail(sender) {
+			guid := xid.New()
 
-		db.Create(&Email{Id: guid.String(), Recipient: recipient, Sender: sender, Subject: subject, Body: body})
+			db.Create(&Email{Id: guid.String(), Recipient: recipient, Sender: sender, Subject: subject, Body: body})
+
+			c.JSON(http.StatusOK, gin.H{
+				"status": "ok",
+			})
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": "Invalid email address",
+		})
 
 	})
 

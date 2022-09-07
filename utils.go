@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"math/rand"
+	"net/mail"
 )
 
 type Config struct {
@@ -26,4 +27,9 @@ func RandomString(length int) string {
 		b[i] = letters[rand.Intn(len(letters))]
 	}
 	return string(b)
+}
+
+func ValidateEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
 }
