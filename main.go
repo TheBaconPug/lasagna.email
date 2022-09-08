@@ -29,7 +29,9 @@ func main() {
 	db.AutoMigrate(&Email{})
 
 	router := gin.Default()
-	router.LoadHTMLGlob("views/*")
+	router.LoadHTMLGlob("templates/*")
+
+	router.Static("/assets", "./assets")
 
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{"Address": fmt.Sprintf("%s@%s", RandomString(10), config.Domain)})

@@ -1,4 +1,4 @@
-<img src="images/logoandtext.svg" alt="logo" width="250"/>
+<img src="assets/images/logoandtext.svg" alt="logo" width="250"/>
 
 A easy to use temporary email service
 
