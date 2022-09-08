@@ -78,21 +78,33 @@ func main() {
 	})
 
 	router.POST("/api/callback", func(c *gin.Context) {
+		var emailBody string
+
 		c.Request.ParseForm()
+
+		fmt.Println(c.Request.PostForm)
 
 		recipient := c.Request.PostForm["recipient"][0]
 		sender := c.Request.PostForm["sender"][0]
 		subject := c.Request.PostForm["subject"][0]
-		body := c.Request.PostForm["body-html"][0]
+		// body := c.Request.PostForm["body-html"][0]
+
+		if body, exists := c.Request.PostForm["body-html"]; exists {
+			emailBody = body[0]
+		} else {
+			emailBody = c.Request.PostForm["stripped-html"][0]
+		}
 
 		if ValidateEmail(recipient) && ValidateEmail(sender) {
 			guid := xid.New()
 
-			db.Create(&Email{Id: guid.String(), Recipient: recipient, Sender: sender, Subject: subject, Body: body})
+			db.Create(&Email{Id: guid.String(), Recipient: recipient, Sender: sender, Subject: subject, Body: emailBody})
 
 			c.JSON(http.StatusOK, gin.H{
 				"status": "ok",
 			})
+
+			return
 		}
 
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -100,6 +112,7 @@ func main() {
 			"message": "Invalid email address",
 		})
 
+		return
 	})
 
 	router.Run(fmt.Sprintf(":%s", config.Port))
