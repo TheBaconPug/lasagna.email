@@ -8,9 +8,8 @@ import (
 )
 
 type Config struct {
-	Port          string `json:"port"`
-	Domain        string `json:"domain"`
-	MailgunAPIKey string `json:"mailgun_api_key"`
+	Port   string `json:"port"`
+	Domain string `json:"domain"`
 }
 
 func LoadConfig() Config {

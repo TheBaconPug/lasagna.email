@@ -87,7 +87,6 @@ func main() {
 		recipient := c.Request.PostForm["recipient"][0]
 		sender := c.Request.PostForm["sender"][0]
 		subject := c.Request.PostForm["subject"][0]
-		// body := c.Request.PostForm["body-html"][0]
 
 		if body, exists := c.Request.PostForm["body-html"]; exists {
 			emailBody = body[0]
