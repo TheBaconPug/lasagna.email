@@ -26,7 +26,7 @@ Set the priority to 0
 ## Step three: Edit the config
 
 Set "port" to the port you're going to use\
-Set "domain" to your domain name\
+Set "domains" to your domain name(s)\
 Rename "config.example.json" to "config.json"
 
 ## Step four: Start the site
