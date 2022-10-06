@@ -4,6 +4,11 @@
 <head>
     <title>Lasagna Mail</title>
     <link href="https://bootswatch.com/5/slate/bootstrap.min.css" rel="stylesheet">
+    <style>
+        h2 {
+            display: inline;
+        }
+    </style>
 </head>
 
 <body>
@@ -11,10 +16,25 @@
         <div class="row">
             <div style="height: 100vh">
                 <div class="h-100 d-flex justify-content-center vstack">
-                    <div class="card text-center align-self-center border-0" style="padding:10px;margin:10px;background-color:#424549;">
+                    <div class="card text-center align-self-center border-0"
+                        style="padding:10px;margin:10px;background-color:#424549;">
                         <div class="card-body">
                             <img class="card-img-top" alt="logo" src="/assets/images/logoandtext.svg">
-                            <h2>{{.Address}}</h2>
+                            <div>
+                                <div class="dropdown" style="display: inline;">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button"
+                                        id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        <h2>{{.Address}}@{{(index .Domains 0)}}</h2>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        {{range .Domains}}
+                                        <a class="dropdown-item">{{.}}</a>
+                                        {{end}}
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
                             <a href="/inbox/{{.Address}}" class="btn btn-primary">Get Emails</a>
                         </div>
                     </div>
@@ -22,6 +42,19 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script>
+        const address = {{.Address }}
+
+        $(function () {
+            $(".dropdown-menu a").click(function () {
+                $(".btn:first-child h2").remove();
+                $(".btn:first-child").append(`<h2>${address}@${$(this).text()}</h2>`);
+                $(".btn:last-child").attr("href", `/inbox/${address}@${$(this).text()}`);
+            });
+        });
+    </script>
 </body>
 
 </html>

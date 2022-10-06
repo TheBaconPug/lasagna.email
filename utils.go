@@ -8,8 +8,8 @@ import (
 )
 
 type Config struct {
-	Port   string `json:"port"`
-	Domain string `json:"domain"`
+	Port    string   `json:"port"`
+	Domains []string `json:"domains"`
 }
 
 func LoadConfig() Config {

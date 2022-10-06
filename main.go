@@ -34,7 +34,7 @@ func main() {
 	router.Static("/assets", "./assets")
 
 	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{"Address": fmt.Sprintf("%s@%s", RandomString(10), config.Domain)})
+		c.HTML(http.StatusOK, "index.html", gin.H{"Domains": config.Domains, "Address": RandomString(10)})
 	})
 
 	router.GET("/inbox/:email", func(c *gin.Context) {
@@ -110,8 +110,6 @@ func main() {
 			"status":  "error",
 			"message": "Invalid email address",
 		})
-
-		return
 	})
 
 	router.Run(fmt.Sprintf(":%s", config.Port))
