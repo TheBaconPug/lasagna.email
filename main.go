@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -113,6 +114,8 @@ func main() {
 			"message": "Invalid email address",
 		})
 	})
+
+	log.Println("Starting server on port " + config.Port)
 
 	router.Run(fmt.Sprintf(":%s", config.Port))
 }
