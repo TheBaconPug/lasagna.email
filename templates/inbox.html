@@ -1,52 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Lasagna Mail</title>
-    <link href="https://bootswatch.com/5/slate/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/styles.css" rel="stylesheet">
 </head>
 
 <body>
-    <h1>Currently showing mail for {{.Address}}</h1>
-    <table class="table">
+    <h1 class="text-center">Showing inbox for {{.Address}}</h1>
+    <table>
         <thead>
             <tr>
                 <th scope="col">Id</th>
                 <th scope="col">From</th>
                 <th scope="col">Subject</th>
                 <th scope="col">Date</th>
-            </tr>   
+            </tr>
         </thead>
-        <tbody id="table-body">
+        <tbody id="tbody">
 
         </tbody>
-        <script>
-            const tableBody = document.getElementById('table-body');
+    </table>
+    <script>
+        const tableBody = document.getElementById("tbody");
 
-            check();
+        let wasteOfRam = [];
 
-            setInterval(check, 1000);
+        check();
 
-            function check() {
-                fetch('/api/inbox/{{.Address}}')
-                    .then(function (response) {
-                        return response.json();
-                    })
-                    .then(function (data) {
-                        tableBody.innerHTML = '';
-                        data["emails"].forEach((email) => {
-                            tableBody.innerHTML += `
-                                <tr>
-                                    <td><a href="/inbox/email/${email.Id}">${email.Id}</a></td>
-                                    <td>${email.Sender}</td>
-                                    <td>${email.Subject}</td>
-                                    <td>${email.CreatedAt}</td>
-                                </tr>
-                            `;
-                        });
+        setInterval(check, 1000);
+
+        function check() {
+            fetch("/api/inbox/{{.Address}}")
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    data["emails"].forEach((email) => {
+                        if (wasteOfRam.includes(email.Id)) {
+                            return;
+                        }
+
+                        wasteOfRam.push(email.Id);
+
+                        tableBody.innerHTML += `
+                    <tr>
+                        <td><a class="custom-link popup-trigger" href="#${email.Id}">${email.Id}</a></td>
+                        <td>${email.Sender}</td>
+                        <td>${email.Subject}</td>
+                        <td>${email.CreatedAt}</td>
+                    </tr>
+                `;
+
+                        const popup = document.createElement("div");
+                        popup.innerHTML += `
+                        <div id="${email.Id}" class="popup">
+                            <a href="#" class="popup-close">&times;</a>
+                            <iframe class="thing" src="/inbox/email/${email.Id}"></iframe>
+                        </div>`
+
+                        document.body.appendChild(popup);
                     });
-            }
-        </script>
+                });
+        }
+    </script>
 </body>
 
 </html>

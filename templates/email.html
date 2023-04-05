@@ -1,27 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Lasagna Mail</title>
-    <link href="https://bootswatch.com/5/slate/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/styles.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container">
-        <div class="row">
-            <div style="height: 100vh">
-                <div class="h-100 d-flex justify-content-center vstack">
-                    <div class="card text-center align-self-center" style="padding:10px;margin:10px;">
-                        <div class="card-body">
-                            <h3>Email Id: {{.Id}}</h3>
-                            <h3>From: {{.Sender}}</h3>
-                            <h3>Subject: {{.Subject}}</h3><br>
-                            <iframe srcdoc="{{.Body}}"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="centered main-content">
+        <h2>Id: <code>{{.Id}}</code></h2>
+        <h2>From: <code>{{.Sender}}</code></h2>
+        <h2>Subject: <code>{{.Subject}}</code></h2>
+        <iframe srcdoc="{{.Body}}"></iframe>
     </div>
 </body>
 

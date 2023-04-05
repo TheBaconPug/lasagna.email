@@ -28,7 +28,9 @@ func main() {
 	}
 	db.AutoMigrate(&Email{})
 
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
+
 	router.LoadHTMLGlob("templates/*")
 
 	router.Static("/assets", "./assets")
