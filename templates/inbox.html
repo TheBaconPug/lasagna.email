@@ -30,7 +30,7 @@
 
         check();
 
-        setInterval(check, 1000);
+        setInterval(check, 2500);
 
         function check() {
             fetch("/api/inbox/{{.Address}}")
