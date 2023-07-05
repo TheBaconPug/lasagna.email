@@ -25,7 +25,7 @@ func main() {
 
 	db, err := gorm.Open(sqlite.Open("emails.db"), &gorm.Config{})
 	if err != nil {
-		panic("failed to connect database")
+		log.Panicln("failed to connect database")
 	}
 	db.AutoMigrate(&Email{})
 
@@ -33,7 +33,6 @@ func main() {
 	router := gin.Default()
 
 	router.LoadHTMLGlob("templates/*")
-
 	router.Static("/assets", "./assets")
 
 	router.GET("/", func(c *gin.Context) {
@@ -45,22 +44,18 @@ func main() {
 	})
 
 	router.GET("/inbox/email/:id", func(c *gin.Context) {
-		var emails []Email
-
 		id := c.Param("id")
 
-		db.Where("id = ?", id).Find(&emails)
-
-		email := emails[0]
+		var email Email
+		db.Where("id = ?", id).First(&email)
 
 		c.HTML(http.StatusOK, "email.html", gin.H{"Id": id, "Sender": email.Sender, "Subject": email.Subject, "Body": email.Body})
 	})
 
 	router.GET("/api/inbox/:email", func(c *gin.Context) {
-		var emails []Email
-
 		email := c.Param("email")
 
+		var emails []Email
 		db.Where("recipient = ?", email).Find(&emails)
 
 		c.JSON(http.StatusOK, gin.H{
@@ -69,28 +64,20 @@ func main() {
 	})
 
 	router.GET("/api/email/:id", func(c *gin.Context) {
-		var emails []Email
-
 		id := c.Param("id")
 
-		db.Where("id = ?", id).Find(&emails)
+		var email Email
+		db.Where("id = ?", id).First(&email)
 
-		c.JSON(http.StatusOK, gin.H{
-			"emails": emails,
-		})
+		c.JSON(http.StatusOK, email)
 	})
 
 	router.POST("/api/callback", func(c *gin.Context) {
+		recipient := c.Request.PostForm.Get("recipient")
+		sender := c.Request.PostForm.Get("sender")
+		subject := c.Request.PostForm.Get("subject")
+
 		var emailBody string
-
-		c.Request.ParseForm()
-
-		fmt.Println(c.Request.PostForm)
-
-		recipient := c.Request.PostForm["recipient"][0]
-		sender := c.Request.PostForm["sender"][0]
-		subject := c.Request.PostForm["subject"][0]
-
 		if body, exists := c.Request.PostForm["body-html"]; exists {
 			emailBody = body[0]
 		} else {
@@ -101,6 +88,8 @@ func main() {
 			guid := xid.New()
 
 			db.Create(&Email{Id: guid.String(), Recipient: recipient, Sender: sender, Subject: subject, Body: emailBody})
+
+			log.Printf("received email | recipient: %s | sender: %s | id: %s\n", recipient, sender, guid.String())
 
 			c.JSON(http.StatusOK, gin.H{
 				"status": "ok",
