@@ -1,4 +1,5 @@
 {
     "port": "8080",
-    "domains": ["lasagna.email"]
+    "domains": ["lasagna.email"],
+    "mongoURI": ""
 }

@@ -1,23 +1,9 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"math/rand"
 	"net/mail"
 )
-
-type Config struct {
-	Port    string   `json:"port"`
-	Domains []string `json:"domains"`
-}
-
-func LoadConfig() Config {
-	var config Config
-	file, _ := ioutil.ReadFile("config.json")
-	json.Unmarshal(file, &config)
-	return config
-}
 
 func RandomString(length int) string {
 	var letters = []rune("abcdefghijklmnopqrstuvwxyz0123456789")

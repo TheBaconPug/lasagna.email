@@ -7,28 +7,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/xid"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
-type Email struct {
-	gorm.Model
-	Id        string
-	Recipient string
-	Sender    string
-	Subject   string
-	Body      string
+func init() {
+	LoadConfig()
+	CreateMongoClient()
 }
 
 func main() {
-	config := LoadConfig()
-
-	db, err := gorm.Open(sqlite.Open("emails.db"), &gorm.Config{})
-	if err != nil {
-		log.Panicln("failed to connect database")
-	}
-	db.AutoMigrate(&Email{})
-
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
@@ -36,27 +22,25 @@ func main() {
 	router.Static("/assets", "./assets")
 
 	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{"Domains": config.Domains, "Address": RandomString(10)})
+		c.HTML(http.StatusOK, "index.html", gin.H{"Domains": Config.Domains, "Address": RandomString(10)})
 	})
 
-	router.GET("/inbox/:email", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "inbox.html", gin.H{"Address": c.Param("email")})
+	router.GET("/inbox/:address", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "inbox.html", gin.H{"Address": c.Param("address")})
 	})
 
 	router.GET("/inbox/email/:id", func(c *gin.Context) {
 		id := c.Param("id")
 
-		var email Email
-		db.Where("id = ?", id).First(&email)
+		email := GetEmailById(id)
 
 		c.HTML(http.StatusOK, "email.html", gin.H{"Id": id, "Sender": email.Sender, "Subject": email.Subject, "Body": email.Body})
 	})
 
-	router.GET("/api/inbox/:email", func(c *gin.Context) {
-		email := c.Param("email")
+	router.GET("/api/inbox/:address", func(c *gin.Context) {
+		address := c.Param("address")
 
-		var emails []Email
-		db.Where("recipient = ?", email).Find(&emails)
+		emails := GetInbox(address)
 
 		c.JSON(http.StatusOK, gin.H{
 			"emails": emails,
@@ -66,8 +50,7 @@ func main() {
 	router.GET("/api/email/:id", func(c *gin.Context) {
 		id := c.Param("id")
 
-		var email Email
-		db.Where("id = ?", id).First(&email)
+		email := GetEmailById(id)
 
 		c.JSON(http.StatusOK, email)
 	})
@@ -87,7 +70,7 @@ func main() {
 		if ValidateEmail(recipient) && ValidateEmail(sender) {
 			guid := xid.New()
 
-			db.Create(&Email{Id: guid.String(), Recipient: recipient, Sender: sender, Subject: subject, Body: emailBody})
+			CreateEmail(Email{Id: guid.String(), Recipient: recipient, Sender: sender, Subject: subject, Body: emailBody})
 
 			log.Printf("received email | recipient: %s | sender: %s | id: %s\n", recipient, sender, guid.String())
 
@@ -104,7 +87,7 @@ func main() {
 		})
 	})
 
-	log.Println("Starting server on port " + config.Port)
+	log.Println("Starting server on port " + Config.Port)
 
-	router.Run(fmt.Sprintf(":%s", config.Port))
+	router.Run(fmt.Sprintf(":%s", Config.Port))
 }
