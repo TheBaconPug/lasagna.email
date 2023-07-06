@@ -62,13 +62,6 @@ func main() {
 		sender := c.Request.PostForm.Get("sender")
 		subject := c.Request.PostForm.Get("subject")
 
-		// var emailBody string
-		// if body, exists := c.Request.PostForm.Get("body-html"); exists {
-		// 	emailBody = body[0]
-		// } else {
-		// 	emailBody = c.Request.PostForm["stripped-html"][0]
-		// }
-
 		var emailBody string
 
 		bodyHtml := c.Request.PostForm.Get("body-html")
