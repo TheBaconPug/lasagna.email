@@ -56,15 +56,26 @@ func main() {
 	})
 
 	router.POST("/api/callback", func(c *gin.Context) {
+		c.Request.ParseForm()
+
 		recipient := c.Request.PostForm.Get("recipient")
 		sender := c.Request.PostForm.Get("sender")
 		subject := c.Request.PostForm.Get("subject")
 
+		// var emailBody string
+		// if body, exists := c.Request.PostForm.Get("body-html"); exists {
+		// 	emailBody = body[0]
+		// } else {
+		// 	emailBody = c.Request.PostForm["stripped-html"][0]
+		// }
+
 		var emailBody string
-		if body, exists := c.Request.PostForm["body-html"]; exists {
-			emailBody = body[0]
+
+		bodyHtml := c.Request.PostForm.Get("body-html")
+		if bodyHtml != "" {
+			emailBody = bodyHtml
 		} else {
-			emailBody = c.Request.PostForm["stripped-html"][0]
+			emailBody = c.Request.PostForm.Get("stripped-html")
 		}
 
 		if ValidateEmail(recipient) && ValidateEmail(sender) {

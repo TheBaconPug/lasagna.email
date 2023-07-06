@@ -30,12 +30,6 @@ func CreateMongoClient() {
 		panic(err)
 	}
 
-	defer func() {
-		if err = MongoClient.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
-
 	MongoCollection = MongoClient.Database("lasagnamail").Collection("emails")
 }
 
@@ -71,5 +65,8 @@ func GetInbox(address string) []Email {
 }
 
 func CreateEmail(email Email) {
-	MongoCollection.InsertOne(context.TODO(), email)
+	_, err := MongoCollection.InsertOne(context.TODO(), email)
+	if err != nil {
+		panic(err)
+	}
 }
