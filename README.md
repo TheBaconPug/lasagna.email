@@ -27,6 +27,7 @@ Set the priority to 0
 
 Set "port" to the port you're going to use\
 Set "domains" to your domain name(s)\
+Set "mongoURI" to your mongodb connection string
 Rename "config.example.json" to "config.json"
 
 ## Step four: Start the site
